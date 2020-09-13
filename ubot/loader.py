@@ -3,9 +3,11 @@
 import glob
 from concurrent.futures import ThreadPoolExecutor
 from importlib import import_module, reload
+from os import remove
 from os.path import basename, dirname, isfile
 
 from aiohttp import ClientSession
+
 from telethon.tl.types import DocumentAttributeFilename
 
 from .command_handler import CommandHandler
@@ -18,6 +20,8 @@ class Loader():
     help_dict = {}
     loaded_modules = []
     all_modules = {}
+
+    user_mod_dir = dirname(__file__) + "/modules/user/"
 
     def __init__(self, client, logger, settings):
         self.client = client
@@ -34,6 +38,15 @@ class Loader():
                     self.loaded_modules.append(import_module(f"ubot.modules.{module_type}.{module_name}"))
                 except Exception as exception:
                     self.logger.error(f"Error while loading {module_type}.{module_name}: {exception}")
+
+    def load_user_module(self, module_name):
+        self.all_modules = self._find_all_modules()
+        self.loaded_modules.append(import_module(f"ubot.modules.user.{module_name}"))
+
+    def uninstall_user_module(self, module_name):
+        remove(f"{self.user_mod_dir}{module_name}.py")
+        self.all_modules["user"].remove(module_name)
+        self.command_handler.outgoing_commands.pop(module_name, None)
 
     def reload_all_modules(self):
         self.command_handler.outgoing_commands = []

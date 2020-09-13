@@ -1,11 +1,12 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import asyncio
+from os import remove
+from os.path import dirname
 from platform import python_version
 from time import time_ns
 
 from telethon import version
-
 from ubot import ldr, micro_bot
 
 
@@ -105,3 +106,38 @@ async def change_prefix(event):
 @ldr.add("repo")
 async def bot_repo(event):
     await event.edit("https://github.com/Nick80835/microbot")
+
+
+@ldr.add("showmods")
+async def show_modules(event):
+    await event.edit(f"Loaded user modules: {', '.join(ldr.all_modules.get('user'))}")
+
+
+@ldr.add("insmod")
+async def install_module(event):
+    if not event.is_reply:
+        await event.edit("Please reply to a valid module file!")
+        return
+
+    reply = await event.get_reply_message()
+
+    if reply.file.name and reply.file.name.endswith(".py"):
+        await event.client.download_media(reply.media.document, f"{ldr.user_mod_dir}{reply.file.name}")
+
+        try:
+            ldr.load_user_module(reply.file.name[:-3])
+            await event.edit(f"Successfully loaded module: {reply.file.name[:-3]}")
+        except:
+            remove(f"{ldr.user_mod_dir}{reply.file.name}")
+            await event.edit(f"Failed to load module: {reply.file.name[:-3]}")
+    else:
+        await event.edit("Please reply to a valid module file!")
+
+
+@ldr.add("delmod")
+async def delete_module(event):
+    try:
+        ldr.uninstall_user_module(event.args)
+        await event.edit(f"Successfully uninstalled module: {event.args}")
+    except:
+        await event.edit(f"Failed to uninstall module: {event.args}")
