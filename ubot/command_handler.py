@@ -10,7 +10,7 @@ class CommandHandler():
     simple_pattern_template = "(?is)^({0}){1}(?: |$|_)(.*)"
     raw_pattern_template = "(?is){0}"
 
-    outgoing_commands = []
+    outgoing_commands = {}
 
     def __init__(self, client, settings):
         self.settings = settings
@@ -19,23 +19,24 @@ class CommandHandler():
     async def handle_outgoing(self, event):
         prefix = "|".join([escape(i) for i in (self.settings.get_list("cmd_prefix") or ['.'])])
 
-        for value in self.outgoing_commands:
-            if value["simple_pattern"]:
-                pattern_match = search(self.simple_pattern_template.format(value["pattern"], value["pattern_extra"]), event.raw_text)
-            elif value["raw_pattern"]:
-                pattern_match = search(self.raw_pattern_template.format(value["pattern"] + value["pattern_extra"]), event.raw_text)
-            else:
-                pattern_match = search(self.pattern_template.format(prefix, value["pattern"], value["pattern_extra"]), event.raw_text)
+        for module_name, command_list in self.outgoing_commands.items():
+            for command in command_list:
+                if command["simple_pattern"]:
+                    pattern_match = search(self.simple_pattern_template.format(command["pattern"], command["pattern_extra"]), event.raw_text)
+                elif command["raw_pattern"]:
+                    pattern_match = search(self.raw_pattern_template.format(command["pattern"] + command["pattern_extra"]), event.raw_text)
+                else:
+                    pattern_match = search(self.pattern_template.format(prefix, command["pattern"], command["pattern_extra"]), event.raw_text)
 
-            if pattern_match:
-                event.pattern_match = pattern_match
-                event.args = pattern_match.groups()[-1].strip()
-                event.other_args = pattern_match.groups()[2:-1]
-                event.command = pattern_match.groups()[1]
-                event.extra = value["extra"]
+                if pattern_match:
+                    event.pattern_match = pattern_match
+                    event.args = pattern_match.groups()[-1].strip()
+                    event.other_args = pattern_match.groups()[2:-1]
+                    event.command = pattern_match.groups()[1]
+                    event.extra = command["extra"]
 
-                try:
-                    await value["function"](event)
-                except Exception as exception:
-                    await event.reply(f"`An error occurred in {value['function'].__name__}: {exception}`")
-                    raise exception
+                    try:
+                        await command["function"](event)
+                    except Exception as exception:
+                        await event.reply(f"`An error occurred in {command['function'].__name__}: {exception}`")
+                        raise exception

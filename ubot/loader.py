@@ -57,19 +57,31 @@ class Loader():
         pattern_extra = args.get("pattern_extra", "")
 
         def decorator(func):
-            if func.__module__.split(".")[-1] in self.help_dict:
-                self.help_dict[func.__module__.split(".")[-1]] += [[pattern, args.get('help', None)]]
-            else:
-                self.help_dict[func.__module__.split(".")[-1]] = [[pattern, args.get('help', None)]]
+            module_name = func.__module__.split(".")[-1]
 
-            self.command_handler.outgoing_commands.append({
-                "pattern": pattern,
-                "pattern_extra": pattern_extra,
-                "function": func,
-                "simple_pattern": args.get('simple_pattern', False),
-                "raw_pattern": args.get('raw_pattern', False),
-                "extra": args.get('extra', pattern)
-            })
+            if module_name in self.help_dict:
+                self.help_dict[module_name] += [[pattern, args.get('help', None)]]
+            else:
+                self.help_dict[module_name] = [[pattern, args.get('help', None)]]
+
+            if func.__module__.split(".")[-1] in self.command_handler.outgoing_commands:
+                self.command_handler.outgoing_commands[module_name].append({
+                    "pattern": pattern,
+                    "pattern_extra": pattern_extra,
+                    "function": func,
+                    "simple_pattern": args.get('simple_pattern', False),
+                    "raw_pattern": args.get('raw_pattern', False),
+                    "extra": args.get('extra', None)
+                })
+            else:
+                self.command_handler.outgoing_commands[module_name] = [{
+                    "pattern": pattern,
+                    "pattern_extra": pattern_extra,
+                    "function": func,
+                    "simple_pattern": args.get('simple_pattern', False),
+                    "raw_pattern": args.get('raw_pattern', False),
+                    "extra": args.get('extra', None)
+                }]
 
             return func
 
@@ -80,20 +92,32 @@ class Loader():
         pattern_extra = args.get("pattern_extra", "")
 
         def decorator(func):
-            for pattern in pattern_list:
-                if func.__module__.split(".")[-1] in self.help_dict:
-                    self.help_dict[func.__module__.split(".")[-1]] += [[pattern, args.get('help', None)]]
-                else:
-                    self.help_dict[func.__module__.split(".")[-1]] = [[pattern, args.get('help', None)]]
+            module_name = func.__module__.split(".")[-1]
 
-                self.command_handler.outgoing_commands.append({
-                    "pattern": pattern,
-                    "pattern_extra": pattern_extra,
-                    "function": func,
-                    "simple_pattern": args.get('simple_pattern', False),
-                    "raw_pattern": args.get('raw_pattern', False),
-                    "extra": args.get('extra', None)
-                })
+            for pattern in pattern_list:
+                if module_name in self.help_dict:
+                    self.help_dict[module_name] += [[pattern, args.get('help', None)]]
+                else:
+                    self.help_dict[module_name] = [[pattern, args.get('help', None)]]
+
+                if func.__module__.split(".")[-1] in self.command_handler.outgoing_commands:
+                    self.command_handler.outgoing_commands[module_name].append({
+                        "pattern": pattern,
+                        "pattern_extra": pattern_extra,
+                        "function": func,
+                        "simple_pattern": args.get('simple_pattern', False),
+                        "raw_pattern": args.get('raw_pattern', False),
+                        "extra": args.get('extra', None)
+                    })
+                else:
+                    self.command_handler.outgoing_commands[module_name] = [{
+                        "pattern": pattern,
+                        "pattern_extra": pattern_extra,
+                        "function": func,
+                        "simple_pattern": args.get('simple_pattern', False),
+                        "raw_pattern": args.get('raw_pattern', False),
+                        "extra": args.get('extra', None)
+                    }]
 
             return func
 
@@ -104,20 +128,32 @@ class Loader():
         pattern_extra = args.get("pattern_extra", "")
 
         def decorator(func):
-            for pattern, extra in pattern_dict.items():
-                if func.__module__.split(".")[-1] in self.help_dict:
-                    self.help_dict[func.__module__.split(".")[-1]] += [[pattern, args.get('help', None)]]
-                else:
-                    self.help_dict[func.__module__.split(".")[-1]] = [[pattern, args.get('help', None)]]
+            module_name = func.__module__.split(".")[-1]
 
-                self.command_handler.outgoing_commands.append({
-                    "pattern": pattern,
-                    "pattern_extra": pattern_extra,
-                    "function": func,
-                    "simple_pattern": args.get('simple_pattern', False),
-                    "raw_pattern": args.get('raw_pattern', False),
-                    "extra": args.get('extra', extra)
-                })
+            for pattern, extra in pattern_dict.items():
+                if module_name in self.help_dict:
+                    self.help_dict[module_name] += [[pattern, args.get('help', None)]]
+                else:
+                    self.help_dict[module_name] = [[pattern, args.get('help', None)]]
+
+                if func.__module__.split(".")[-1] in self.command_handler.outgoing_commands:
+                    self.command_handler.outgoing_commands[module_name].append({
+                        "pattern": pattern,
+                        "pattern_extra": pattern_extra,
+                        "function": func,
+                        "simple_pattern": args.get('simple_pattern', False),
+                        "raw_pattern": args.get('raw_pattern', False),
+                        "extra": args.get('extra', extra)
+                    })
+                else:
+                    self.command_handler.outgoing_commands[module_name] = [{
+                        "pattern": pattern,
+                        "pattern_extra": pattern_extra,
+                        "function": func,
+                        "simple_pattern": args.get('simple_pattern', False),
+                        "raw_pattern": args.get('raw_pattern', False),
+                        "extra": args.get('extra', extra)
+                    }]
 
             return func
 
