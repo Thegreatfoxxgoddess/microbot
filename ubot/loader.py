@@ -17,7 +17,7 @@ class Loader():
 
     help_dict = {}
     loaded_modules = []
-    all_modules = []
+    all_modules = {}
 
     def __init__(self, client, logger, settings):
         self.client = client
@@ -26,13 +26,14 @@ class Loader():
         self.command_handler = CommandHandler(client, settings)
 
     def load_all_modules(self):
-        self._find_all_modules()
+        self.all_modules = self._find_all_modules()
 
-        for module_name in self.all_modules:
-            try:
-                self.loaded_modules.append(import_module("ubot.modules." + module_name))
-            except Exception as exception:
-                self.logger.error(f"Error while loading {module_name}: {exception}")
+        for module_type, module_list in self.all_modules.items():
+            for module_name in module_list:
+                try:
+                    self.loaded_modules.append(import_module(f"ubot.modules.{module_type}.{module_name}"))
+                except Exception as exception:
+                    self.logger.error(f"Error while loading {module_type}.{module_name}: {exception}")
 
     def reload_all_modules(self):
         self.command_handler.outgoing_commands = []
@@ -164,9 +165,17 @@ class Loader():
         return (self.settings.get_list('cmd_prefix') or ['.'])[0]
 
     def _find_all_modules(self):
-        module_paths = glob.glob(dirname(__file__) + "/modules/*.py")
-
-        self.all_modules = sorted([
-            basename(f)[:-3] for f in module_paths
-            if isfile(f) and f.endswith(".py")
-        ])
+        return {
+            "core": [
+                basename(f)[:-3] for f in glob.glob(dirname(__file__) + "/modules/core/*.py")
+                if isfile(f) and f.endswith(".py")
+            ],
+            "default": [
+                basename(f)[:-3] for f in glob.glob(dirname(__file__) + "/modules/default/*.py")
+                if isfile(f) and f.endswith(".py")
+            ],
+            "user": [
+                basename(f)[:-3] for f in glob.glob(dirname(__file__) + "/modules/user/*.py")
+                if isfile(f) and f.endswith(".py")
+            ]
+        }
