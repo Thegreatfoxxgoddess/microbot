@@ -13,6 +13,8 @@ pillow
 python-dotenv
 psutil
 speedtest-cli
-telethon
+tgcrypto
+uvloop
 Pafy
 youtube-dl
+https://github.com/Nick80835/Telethon/archive/master.zip
