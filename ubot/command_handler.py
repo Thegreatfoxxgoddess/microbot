@@ -46,11 +46,6 @@ class CommandHandler():
                     event.nsfw_disabled = str(event.chat.id) in self.settings.get_list("nsfw_blacklist")
 
                 event.command = pattern_match.groups()[1]
-
-                if event.command in self.loader.db.get_disabled_commands(event.chat.id):
-                    print(f"Attempted command ({event.raw_text}) in chat which disabled it ({event.chat.id}) from ID {event.from_id}")
-                    return
-
                 event.pattern_match = pattern_match
                 event.args = pattern_match.groups()[-1].strip()
                 event.other_args = pattern_match.groups()[2:-1]

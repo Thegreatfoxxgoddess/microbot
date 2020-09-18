@@ -13,14 +13,12 @@ from .cache import Cache
 from .command import (CallbackQueryCommand, Command, InlineArticleCommand,
                       InlinePhotoCommand)
 from .command_handler import CommandHandler
-from .database import Database
 
 
 class Loader():
     aioclient = ClientSession()
     thread_pool = ThreadPoolExecutor()
     cache = Cache(aioclient)
-    db = Database()
 
     loaded_modules = []
     all_modules = []

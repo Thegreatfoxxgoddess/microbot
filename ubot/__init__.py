@@ -42,32 +42,12 @@ class MicroBot():
         basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=INFO)
         self.logger = getLogger(__name__)
 
-    def _check_config(self):
+    def start_client(self):
         api_key = self.settings.get_config("api_key")
         api_hash = self.settings.get_config("api_hash")
         bot_token = self.settings.get_config("bot_token")
 
-        while not api_key:
-            api_key = input("Enter your API key: ")
-
-        self.settings.set_config("api_key", api_key)
-
-        while not api_hash:
-            api_hash = input("Enter your API hash: ")
-
-        self.settings.set_config("api_hash", api_hash)
-
-        while not bot_token:
-            bot_token = input("Enter your bot token: ")
-
-        self.settings.set_config("bot_token", bot_token)
-
-        return api_key, api_hash, bot_token
-
-    def start_client(self):
-        api_key, api_hash, bot_token = self._check_config()
-
-        self.client = tt.TelegramClient(self.settings.get_config("session_name", "bot0"), api_key, api_hash, connection=CTA)
+        self.client = tt.TelegramClient('Bot', api_key, api_hash, connection=CTA)
 
         try:
             self.client.start(bot_token=bot_token)
