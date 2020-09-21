@@ -5,11 +5,12 @@ import inspect
 import io
 import os
 from platform import python_version
+from time import time
 
 import psutil
 from telethon import version
 
-from ubot import ldr, micro_bot
+from ubot import ldr, micro_bot, startup_time
 
 
 @ldr.add("eval", owner=True, hide_help=True)
@@ -79,11 +80,12 @@ async def sysd(event):
 async def alive(event):
     alive_format = "**Telethon version:** {0}\n" \
                    "**Python version:** {1}\n" \
-                   "**Memory usage:** {2}MiB"
+                   "**Memory usage:** {2}MiB\n" \
+                   "**Uptime:** {3} seconds"
 
     mem_usage = int(psutil.Process(os.getpid()).memory_info().rss / 1048576)
 
-    await event.reply(alive_format.format(version.__version__, python_version(), mem_usage))
+    await event.reply(alive_format.format(version.__version__, python_version(), mem_usage, int(time() - startup_time)))
 
 
 @ldr.add("shutdown", owner=True, hide_help=True)
