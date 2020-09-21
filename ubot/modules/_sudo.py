@@ -4,6 +4,7 @@ import asyncio
 import inspect
 import io
 import os
+from datetime import timedelta
 from platform import python_version
 from time import time
 
@@ -81,11 +82,11 @@ async def alive(event):
     alive_format = "**Telethon version:** {0}\n" \
                    "**Python version:** {1}\n" \
                    "**Memory usage:** {2}MiB\n" \
-                   "**Uptime:** {3} seconds"
+                   "**Uptime:** {3}"
 
     mem_usage = int(psutil.Process(os.getpid()).memory_info().rss / 1048576)
 
-    await event.reply(alive_format.format(version.__version__, python_version(), mem_usage, int(time() - startup_time)))
+    await event.reply(alive_format.format(version.__version__, python_version(), mem_usage, timedelta(seconds=int(time() - startup_time))))
 
 
 @ldr.add("shutdown", owner=True, hide_help=True)
