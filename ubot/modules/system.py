@@ -79,7 +79,7 @@ async def ping(event):
 
 @ldr.add("repo")
 async def bot_repo(event):
-    await event.reply("https://github.com/Nick80835/microbot")
+    await event.reply("https://github.com/Nick80835/microbot/tree/bot_heroku")
 
 
 @ldr.add("nsfw", admin=True, help="Enables or disables NSFW commands for a chat, requires admin.")
