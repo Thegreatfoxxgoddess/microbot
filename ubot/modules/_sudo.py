@@ -10,6 +10,7 @@ from time import time
 
 import psutil
 from telethon import version
+from telethon.tl.types import Channel, Chat
 
 from ubot import ldr, micro_bot, startup_time
 
@@ -179,7 +180,12 @@ async def get_user(event):
             pass
 
         try:
-            return await event.client.get_entity(event.args)
+            user = await event.client.get_entity(event.args)
+
+            if isinstance(user, (Chat, Channel)):
+                raise TypeError
+
+            return user
         except (ValueError, TypeError):
             await event.reply("The ID or username you provided was invalid!")
             return
@@ -189,7 +195,12 @@ async def get_user(event):
 
         if reply_id:
             try:
-                return await event.client.get_entity(reply_id)
+                user = await event.client.get_entity(reply_id)
+
+                if isinstance(user, (Chat, Channel)):
+                    raise TypeError
+
+                return user
             except (ValueError, TypeError):
                 await event.reply("There was an error getting the user's ID!")
                 return
