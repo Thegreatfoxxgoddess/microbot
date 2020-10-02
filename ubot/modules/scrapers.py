@@ -122,7 +122,7 @@ async def text_to_speech(event):
         await event.reply('Error loading the languages dictionary.')
         return
 
-    await event.client.send_file(event.chat_id, tts_bytesio, voice_note=True, reply_to=reply)
+    await event.client.send_file(event.peer_id, tts_bytesio, voice_note=True, reply_to=reply)
 
 
 @ldr.add("ip", help="IP lookup.")
