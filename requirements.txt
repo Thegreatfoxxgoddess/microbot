@@ -4,7 +4,6 @@ aiohttp[speedups]
 asyncbooru
 asyncpraw
 cchardet
-cryptg
 gTTS
 hachoir
 heroku3
