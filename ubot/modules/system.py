@@ -92,6 +92,11 @@ async def bot_repo(event):
     await event.reply("https://github.com/Nick80835/microbot/tree/bot_heroku")
 
 
+@ldr.add("support")
+async def support_link(event):
+    await event.reply("[μBot Support](https://t.me/joinchat/Ed1JxFLq3DtQSbBnyNRI7A)")
+
+
 @ldr.add("nsfw", admin=True, help="Enables or disables NSFW commands for a chat, requires admin.")
 async def nsfw_toggle(event):
     if not event.args or event.args not in ("on", "off"):
