@@ -1,17 +1,13 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import io
-import os
 import re
 
 from gtts import gTTS
-from howdoi import howdoi
 from PIL import Image
 from telethon.tl.types import DocumentAttributeVideo
 
 from ubot import ldr
-
-os.environ["HOWDOI_SEARCH_ENGINE"] = "bing"
 
 
 @ldr.add("dadjoke", help="Fetches the most funny shit you've ever read.")
@@ -86,18 +82,6 @@ async def pokemon_image(event):
     sticker_io.name = "sticker.webp"
 
     await event.reply(file=sticker_io)
-
-
-@ldr.add("hdi")
-async def howdoi_cmd(event):
-    if not event.args:
-        await event.reply(f"Syntax: {ldr.prefix()}hdi <question>")
-        return
-
-    response = howdoi.howdoi(vars(howdoi.get_parser().parse_args(event.args.split(' '))))
-    response = re.sub(r'\n\n+', '\n\n', response).strip()
-
-    await event.reply(f"**Query:**\n{event.args}\n**Answer:**\n{response}")
 
 
 @ldr.add("tts", help="Text to speech.")

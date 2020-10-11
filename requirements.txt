@@ -7,7 +7,6 @@ cchardet
 gTTS
 hachoir
 heroku3
-howdoi
 pillow
 python-dotenv
 psutil
