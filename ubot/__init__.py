@@ -2,13 +2,14 @@ import sys
 from logging import INFO, basicConfig, getLogger
 from time import time
 
-import telethon as tt
+import telethon
 from telethon.errors.rpcerrorlist import (AccessTokenExpiredError,
                                           AccessTokenInvalidError,
                                           TokenInvalidError)
 from telethon.network.connection.tcpabridged import \
     ConnectionTcpAbridged as CTA
 
+from .custom import ExtendedEvent
 from .loader import Loader
 from .settings import Settings
 
@@ -48,7 +49,7 @@ class MicroBot():
         api_hash = self.settings.get_config("api_hash")
         bot_token = self.settings.get_config("bot_token")
 
-        self.client = tt.TelegramClient('Bot', api_key, api_hash, connection=CTA)
+        self.client = telethon.TelegramClient('Bot', api_key, api_hash, connection=CTA)
 
         try:
             self.client.start(bot_token=bot_token)
@@ -65,6 +66,8 @@ class MicroBot():
         await self.loader.aioclient.close()
         await self.client.disconnect()
 
+
+telethon.events.NewMessage.Event = ExtendedEvent
 
 micro_bot = MicroBot()
 ldr = micro_bot.loader
